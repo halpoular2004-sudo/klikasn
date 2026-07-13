@@ -77,14 +77,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Klika.sn — Automatisez vos ventes. Gagnez plus. Travaillez moins." },
+      {
+        name: "description",
+        content:
+          "Klika.sn est la plateforme d'automatisation commerciale n°1 d'Afrique francophone : commandes, paiements Wave & Orange Money, WhatsApp et IA, réunis en un seul outil.",
+      },
+      { name: "author", content: "Klika.sn" },
+      { property: "og:title", content: "Klika.sn — Automatisez vos ventes" },
+      {
+        property: "og:description",
+        content:
+          "La plateforme premium pour automatiser vos ventes WhatsApp, gérer vos commandes et encaisser via Wave, Orange Money et plus.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Klika.sn — Automatisez vos ventes" },
+      {
+        name: "twitter:description",
+        content: "Automatisez vos ventes. Gagnez plus. Travaillez moins.",
+      },
     ],
     links: [
       {
@@ -92,6 +104,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
