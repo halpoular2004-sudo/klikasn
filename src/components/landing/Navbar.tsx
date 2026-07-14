@@ -50,10 +50,10 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <Button variant="ghost" asChild>
-            <Link to="/">Connexion</Link>
+            <Link to="/auth">Connexion</Link>
           </Button>
           <Button variant="hero" asChild>
-            <Link to="/">Commencer gratuitement</Link>
+            <Link to="/auth">Commencer gratuitement</Link>
           </Button>
         </div>
 
@@ -81,10 +81,10 @@ export function Navbar() {
             ))}
             <div className="mt-2 flex flex-col gap-2">
               <Button variant="outline" asChild>
-                <Link to="/">Connexion</Link>
+                <Link to="/auth">Connexion</Link>
               </Button>
               <Button variant="hero" asChild>
-                <Link to="/">Commencer gratuitement</Link>
+                <Link to="/auth">Commencer gratuitement</Link>
               </Button>
             </div>
           </div>

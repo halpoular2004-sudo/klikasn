@@ -123,8 +123,7 @@ function OrdersPage() {
                     <TableRow key={o.id}>
                       <TableCell className="font-medium">#{o.order_number}</TableCell>
                       <TableCell>
-                        {/* @ts-expect-error joined shape */}
-                        {o.customer?.name ?? "—"}
+                        {(o as unknown as { customer?: { name?: string } | null }).customer?.name ?? "—"}
                       </TableCell>
                       <TableCell>{new Intl.NumberFormat("fr-FR").format(Number(o.total))} FCFA</TableCell>
                       <TableCell><Badge variant="outline">{o.payment_status}</Badge></TableCell>
