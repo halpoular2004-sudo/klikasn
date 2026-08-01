@@ -11,6 +11,7 @@ import {
   Store,
   LogOut,
   Zap,
+  UserCircle,
 } from "lucide-react";
 import {
   Sidebar,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const mainItems = [
@@ -43,15 +45,19 @@ const toolItems = [
 
 const settingsItems = [
   { title: "Ma boutique", url: "/store", icon: Store },
+  { title: "Mon profil", url: "/profile", icon: UserCircle },
   { title: "Paramètres", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (path: string) => pathname === path || pathname.startsWith(path + "/");
 
   const handleSignOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
     await supabase.auth.signOut();
     toast.success("Vous êtes déconnecté");
     navigate({ to: "/auth", replace: true });
