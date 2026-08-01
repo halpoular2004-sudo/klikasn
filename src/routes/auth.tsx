@@ -70,6 +70,26 @@ function AuthPage() {
     toast.success("Compte créé, vous pouvez vous connecter.");
   };
 
+  const handleForgot = async () => {
+    const input = document.getElementById("email") as HTMLInputElement | null;
+    const email = input?.value.trim();
+    if (!email) {
+      toast.error("Saisissez d'abord votre email");
+      input?.focus();
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Email de réinitialisation envoyé");
+  };
+
   const handleGoogle = async () => {
     setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
@@ -130,8 +150,24 @@ function AuthPage() {
                     <Input id="email" name="email" type="email" required autoComplete="email" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="password">Mot de passe</Label>
-                    <Input id="password" name="password" type="password" required autoComplete="current-password" minLength={6} />
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">Mot de passe</Label>
+                      <button
+                        type="button"
+                        onClick={handleForgot}
+                        className="text-xs font-medium text-primary hover:underline"
+                      >
+                        Mot de passe oublié ?
+                      </button>
+                    </div>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      autoComplete="current-password"
+                      minLength={6}
+                    />
                   </div>
                   <Button type="submit" variant="hero" className="w-full" disabled={loading}>
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
