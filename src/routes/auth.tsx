@@ -70,6 +70,26 @@ function AuthPage() {
     toast.success("Compte créé, vous pouvez vous connecter.");
   };
 
+  const handleForgot = async () => {
+    const input = document.getElementById("email") as HTMLInputElement | null;
+    const email = input?.value.trim();
+    if (!email) {
+      toast.error("Saisissez d'abord votre email");
+      input?.focus();
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Email de réinitialisation envoyé");
+  };
+
   const handleGoogle = async () => {
     setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
