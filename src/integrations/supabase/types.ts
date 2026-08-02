@@ -55,6 +55,41 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -237,9 +272,61 @@ export type Database = {
           },
         ]
       }
+      product_variants: {
+        Row: {
+          barcode: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          price: number | null
+          product_id: string
+          sku: string | null
+          stock: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          barcode?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number | null
+          product_id: string
+          sku?: string | null
+          stock?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          barcode?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number | null
+          product_id?: string
+          sku?: string | null
+          stock?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
+          barcode: string | null
           category: string | null
+          category_id: string | null
           compare_at_price: number | null
           cost_price: number | null
           created_at: string
@@ -253,10 +340,13 @@ export type Database = {
           sku: string | null
           stock: number
           store_id: string
+          unit: string
           updated_at: string
         }
         Insert: {
+          barcode?: string | null
           category?: string | null
+          category_id?: string | null
           compare_at_price?: number | null
           cost_price?: number | null
           created_at?: string
@@ -270,10 +360,13 @@ export type Database = {
           sku?: string | null
           stock?: number
           store_id: string
+          unit?: string
           updated_at?: string
         }
         Update: {
+          barcode?: string | null
           category?: string | null
+          category_id?: string | null
           compare_at_price?: number | null
           cost_price?: number | null
           created_at?: string
@@ -287,9 +380,17 @@ export type Database = {
           sku?: string | null
           stock?: number
           store_id?: string
+          unit?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_store_id_fkey"
             columns: ["store_id"]
@@ -328,6 +429,64 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          reason: string | null
+          store_id: string
+          type: Database["public"]["Enums"]["stock_movement_type"]
+          variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          reason?: string | null
+          store_id: string
+          type?: Database["public"]["Enums"]["stock_movement_type"]
+          variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          reason?: string | null
+          store_id?: string
+          type?: Database["public"]["Enums"]["stock_movement_type"]
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       store_members: {
         Row: {
@@ -478,6 +637,7 @@ export type Database = {
         | "stripe"
         | "other"
       payment_status: "unpaid" | "partial" | "paid" | "refunded"
+      stock_movement_type: "in" | "out" | "adjustment" | "sale" | "return"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -635,6 +795,7 @@ export const Constants = {
         "other",
       ],
       payment_status: ["unpaid", "partial", "paid", "refunded"],
+      stock_movement_type: ["in", "out", "adjustment", "sale", "return"],
     },
   },
 } as const

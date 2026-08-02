@@ -12,6 +12,9 @@ import {
   LogOut,
   Zap,
   UserCircle,
+  FolderTree,
+  Boxes,
+
 } from "lucide-react";
 import {
   Sidebar,
@@ -34,8 +37,11 @@ const mainItems = [
   { title: "Tableau de bord", url: "/dashboard", icon: LayoutDashboard },
   { title: "Commandes", url: "/orders", icon: ShoppingCart },
   { title: "Produits", url: "/products", icon: Package },
+  { title: "Catégories", url: "/categories", icon: FolderTree },
+  { title: "Stocks", url: "/inventory", icon: Boxes },
   { title: "Clients", url: "/customers", icon: Users },
 ];
+
 
 const toolItems = [
   { title: "WhatsApp", url: "/whatsapp", icon: MessageCircle },
