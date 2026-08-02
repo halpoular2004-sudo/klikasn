@@ -12,6 +12,9 @@ import {
   LogOut,
   Zap,
   UserCircle,
+  FolderTree,
+  Boxes,
+
 } from "lucide-react";
 import {
   Sidebar,
