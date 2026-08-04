@@ -9,8 +9,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,13 +36,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Loader2, ShoppingCart, Search, Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
-const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_LABELS: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
   pending: { label: "En attente", variant: "secondary" },
   confirmed: { label: "Confirmée", variant: "default" },
   processing: { label: "En préparation", variant: "default" },
@@ -81,7 +105,10 @@ export const Route = createFileRoute("/_authenticated/orders")({
   head: () => ({
     meta: [
       { title: "Commandes — Klika.sn" },
-      { name: "description", content: "Créez et suivez vos commandes, stocks et paiements sur Klika.sn." },
+      {
+        name: "description",
+        content: "Créez et suivez vos commandes, stocks et paiements sur Klika.sn.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -121,7 +148,10 @@ function OrdersPage() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.rpc("update_order_status", { p_order_id: id, p_status: status });
+      const { error } = await supabase.rpc("update_order_status", {
+        p_order_id: id,
+        p_status: status,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -164,12 +194,19 @@ function OrdersPage() {
           <div className="flex items-center gap-2 mb-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="N° commande..." className="pl-9" value={q} onChange={(e) => setQ(e.target.value)} />
+              <Input
+                placeholder="N° commande..."
+                className="pl-9"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
             </div>
           </div>
 
           {orders.isLoading ? (
-            <div className="py-16 text-center"><Loader2 className="mx-auto h-6 w-6 animate-spin" /></div>
+            <div className="py-16 text-center">
+              <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+            </div>
           ) : filtered.length === 0 ? (
             <div className="py-16 text-center">
               <ShoppingCart className="mx-auto h-10 w-10 text-muted-foreground" />
@@ -193,19 +230,29 @@ function OrdersPage() {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((o) => {
-                    const st = STATUS_LABELS[o.status] ?? { label: o.status, variant: "secondary" as const };
-                    const items = (o as unknown as { order_items?: { id: string }[] }).order_items ?? [];
-                    const customer = (o as unknown as { customer?: { name?: string } | null }).customer;
+                    const st = STATUS_LABELS[o.status] ?? {
+                      label: o.status,
+                      variant: "secondary" as const,
+                    };
+                    const items =
+                      (o as unknown as { order_items?: { id: string }[] }).order_items ?? [];
+                    const customer = (o as unknown as { customer?: { name?: string } | null })
+                      .customer;
                     const transitions = ALLOWED_TRANSITIONS[o.status] ?? [];
                     return (
-                      <TableRow key={o.id} className="cursor-pointer" onClick={() => setDetailId(o.id)}>
+                      <TableRow
+                        key={o.id}
+                        className="cursor-pointer"
+                        onClick={() => setDetailId(o.id)}
+                      >
                         <TableCell className="font-medium">{o.order_number}</TableCell>
                         <TableCell>{customer?.name ?? "—"}</TableCell>
                         <TableCell>{items.length}</TableCell>
                         <TableCell>{fmt(Number(o.total))}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {PAYMENT_STATUSES.find((p) => p.value === o.payment_status)?.label ?? o.payment_status}
+                            {PAYMENT_STATUSES.find((p) => p.value === o.payment_status)?.label ??
+                              o.payment_status}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
@@ -218,11 +265,15 @@ function OrdersPage() {
                             onValueChange={(v) => setPendingStatus({ id: o.id, status: v })}
                           >
                             <SelectTrigger className="w-36 h-8">
-                              <SelectValue><Badge variant={st.variant}>{st.label}</Badge></SelectValue>
+                              <SelectValue>
+                                <Badge variant={st.variant}>{st.label}</Badge>
+                              </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                               {transitions.map((k) => (
-                                <SelectItem key={k} value={k}>{STATUS_LABELS[k]?.label ?? k}</SelectItem>
+                                <SelectItem key={k} value={k}>
+                                  {STATUS_LABELS[k]?.label ?? k}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -285,8 +336,23 @@ function OrderDetailDialog({ orderId, onClose }: { orderId: string | null; onClo
   });
 
   const o = detail.data;
-  const customer = (o as unknown as { customer?: { name?: string; phone?: string | null } | null } | undefined)?.customer;
-  const items = ((o as unknown as { order_items?: { id: string; product_name: string; quantity: number; unit_price: number; total: number }[] } | undefined)?.order_items) ?? [];
+  const customer = (
+    o as unknown as { customer?: { name?: string; phone?: string | null } | null } | undefined
+  )?.customer;
+  const items =
+    (
+      o as unknown as
+        | {
+            order_items?: {
+              id: string;
+              product_name: string;
+              quantity: number;
+              unit_price: number;
+              total: number;
+            }[];
+          }
+        | undefined
+    )?.order_items ?? [];
 
   return (
     <Dialog open={!!orderId} onOpenChange={(v) => !v && onClose()}>
@@ -295,7 +361,9 @@ function OrderDetailDialog({ orderId, onClose }: { orderId: string | null; onClo
           <DialogTitle>Commande {o?.order_number ?? ""}</DialogTitle>
         </DialogHeader>
         {detail.isLoading || !o ? (
-          <div className="py-10 text-center"><Loader2 className="mx-auto h-6 w-6 animate-spin" /></div>
+          <div className="py-10 text-center">
+            <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+          </div>
         ) : (
           <div className="space-y-4 text-sm">
             <div className="grid gap-2 sm:grid-cols-2">
@@ -321,34 +389,64 @@ function OrderDetailDialog({ orderId, onClose }: { orderId: string | null; onClo
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={4} className="text-muted-foreground">Aucun article enregistré</TableCell></TableRow>
-                ) : items.map((it) => (
-                  <TableRow key={it.id}>
-                    <TableCell>{it.product_name}</TableCell>
-                    <TableCell className="text-right">{it.quantity}</TableCell>
-                    <TableCell className="text-right">{fmt(Number(it.unit_price))}</TableCell>
-                    <TableCell className="text-right">{fmt(Number(it.total))}</TableCell>
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-muted-foreground">
+                      Aucun article enregistré
+                    </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  items.map((it) => (
+                    <TableRow key={it.id}>
+                      <TableCell>{it.product_name}</TableCell>
+                      <TableCell className="text-right">{it.quantity}</TableCell>
+                      <TableCell className="text-right">{fmt(Number(it.unit_price))}</TableCell>
+                      <TableCell className="text-right">{fmt(Number(it.total))}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
             <div className="space-y-1 text-right">
-              <p>Sous-total : <span className="font-medium">{fmt(Number(o.subtotal))}</span></p>
-              <p>Livraison : <span className="font-medium">{fmt(Number(o.shipping))}</span></p>
-              <p>Remise : <span className="font-medium">-{fmt(Number(o.discount))}</span></p>
+              <p>
+                Sous-total : <span className="font-medium">{fmt(Number(o.subtotal))}</span>
+              </p>
+              <p>
+                Livraison : <span className="font-medium">{fmt(Number(o.shipping))}</span>
+              </p>
+              <p>
+                Remise : <span className="font-medium">-{fmt(Number(o.discount))}</span>
+              </p>
               <p className="text-base font-bold">Total : {fmt(Number(o.total))}</p>
             </div>
             <Separator />
             <div className="flex flex-wrap gap-2">
-              <Badge variant={STATUS_LABELS[o.status]?.variant ?? "secondary"}>{STATUS_LABELS[o.status]?.label ?? o.status}</Badge>
-              <Badge variant="outline">{PAYMENT_STATUSES.find((p) => p.value === o.payment_status)?.label ?? o.payment_status}</Badge>
-              {o.payment_method && <Badge variant="outline">{PAYMENT_METHODS.find((m) => m.value === o.payment_method)?.label ?? o.payment_method}</Badge>}
-              <Badge variant="outline">{CHANNELS.find((c) => c.value === o.channel)?.label ?? o.channel}</Badge>
+              <Badge variant={STATUS_LABELS[o.status]?.variant ?? "secondary"}>
+                {STATUS_LABELS[o.status]?.label ?? o.status}
+              </Badge>
+              <Badge variant="outline">
+                {PAYMENT_STATUSES.find((p) => p.value === o.payment_status)?.label ??
+                  o.payment_status}
+              </Badge>
+              {o.payment_method && (
+                <Badge variant="outline">
+                  {PAYMENT_METHODS.find((m) => m.value === o.payment_method)?.label ??
+                    o.payment_method}
+                </Badge>
+              )}
+              <Badge variant="outline">
+                {CHANNELS.find((c) => c.value === o.channel)?.label ?? o.channel}
+              </Badge>
             </div>
             <div className="space-y-1 text-xs text-muted-foreground">
-              {o.confirmed_at && <p>Confirmée le {new Date(o.confirmed_at).toLocaleString("fr-FR")}</p>}
-              {o.delivered_at && <p>Livrée le {new Date(o.delivered_at).toLocaleString("fr-FR")}</p>}
-              {o.cancelled_at && <p>Annulée le {new Date(o.cancelled_at).toLocaleString("fr-FR")}</p>}
+              {o.confirmed_at && (
+                <p>Confirmée le {new Date(o.confirmed_at).toLocaleString("fr-FR")}</p>
+              )}
+              {o.delivered_at && (
+                <p>Livrée le {new Date(o.delivered_at).toLocaleString("fr-FR")}</p>
+              )}
+              {o.cancelled_at && (
+                <p>Annulée le {new Date(o.cancelled_at).toLocaleString("fr-FR")}</p>
+              )}
             </div>
             {o.notes && <p className="text-muted-foreground">Notes : {o.notes}</p>}
           </div>
@@ -398,7 +496,9 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, price, stock, is_active, product_variants(id, name, value, price, stock, is_active)")
+        .select(
+          "id, name, price, stock, is_active, product_variants(id, name, value, price, stock, is_active)",
+        )
         .eq("store_id", storeId!)
         .order("name");
       if (error) throw error;
@@ -407,7 +507,9 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
   });
 
   const filteredCustomers = (customers.data ?? []).filter((c) =>
-    customerSearch ? `${c.name} ${c.phone ?? ""}`.toLowerCase().includes(customerSearch.toLowerCase()) : true,
+    customerSearch
+      ? `${c.name} ${c.phone ?? ""}`.toLowerCase().includes(customerSearch.toLowerCase())
+      : true,
   );
   const filteredProducts = (products.data ?? []).filter((p) =>
     productSearch ? p.name.toLowerCase().includes(productSearch.toLowerCase()) : true,
@@ -416,7 +518,10 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
   const currentProduct = (products.data ?? []).find((p) => p.id === selectedProduct);
   const variants = (currentProduct?.product_variants ?? []).filter((v) => v.is_active);
   const currentVariant = variants.find((v) => v.id === selectedVariant);
-  const unitPrice = currentVariant?.price != null ? Number(currentVariant.price) : Number(currentProduct?.price ?? 0);
+  const unitPrice =
+    currentVariant?.price != null
+      ? Number(currentVariant.price)
+      : Number(currentProduct?.price ?? 0);
   const availableStock = currentVariant ? currentVariant.stock : (currentProduct?.stock ?? 0);
 
   const subtotal = useMemo(() => cart.reduce((s, l) => s + l.unitPrice * l.quantity, 0), [cart]);
@@ -435,7 +540,8 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
     }
     setCart((prev) => {
       const existing = prev.find((l) => l.key === key);
-      if (existing) return prev.map((l) => (l.key === key ? { ...l, quantity: l.quantity + quantity } : l));
+      if (existing)
+        return prev.map((l) => (l.key === key ? { ...l, quantity: l.quantity + quantity } : l));
       return [
         ...prev,
         {
@@ -460,7 +566,11 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
       if (total < 0) throw new Error("Le total ne peut pas être négatif");
       const { data, error } = await supabase.rpc("create_order_transaction", {
         p_store_id: storeId,
-        p_items: cart.map((l) => ({ product_id: l.productId, variant_id: l.variantId, quantity: l.quantity })),
+        p_items: cart.map((l) => ({
+          product_id: l.productId,
+          variant_id: l.variantId,
+          quantity: l.quantity,
+        })),
         p_customer_id: customerId || undefined,
         p_channel: channel,
         p_payment_status: paymentStatus,
@@ -474,7 +584,11 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
       return data as { order_number?: string; duplicate?: boolean } | null;
     },
     onSuccess: (data) => {
-      toast.success(data?.duplicate ? `Commande déjà enregistrée (${data.order_number})` : `Commande ${data?.order_number} créée`);
+      toast.success(
+        data?.duplicate
+          ? `Commande déjà enregistrée (${data.order_number})`
+          : `Commande ${data?.order_number} créée`,
+      );
       qc.invalidateQueries({ queryKey: ["orders"] });
       qc.invalidateQueries({ queryKey: ["order-products"] });
       qc.invalidateQueries({ queryKey: ["inventory-products"] });
@@ -518,13 +632,25 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
             <UserPlus className="mr-1 h-4 w-4" /> Nouveau client
           </Button>
         </div>
-        <Input placeholder="Rechercher un client..." value={customerSearch} onChange={(e) => setCustomerSearch(e.target.value)} />
-        <Select value={customerId || "none"} onValueChange={(v) => setCustomerId(v === "none" ? "" : v)}>
-          <SelectTrigger><SelectValue placeholder="Sélectionner un client" /></SelectTrigger>
+        <Input
+          placeholder="Rechercher un client..."
+          value={customerSearch}
+          onChange={(e) => setCustomerSearch(e.target.value)}
+        />
+        <Select
+          value={customerId || "none"}
+          onValueChange={(v) => setCustomerId(v === "none" ? "" : v)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Sélectionner un client" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">— Aucun client —</SelectItem>
             {filteredCustomers.map((c) => (
-              <SelectItem key={c.id} value={c.id}>{c.name}{c.phone ? ` · ${c.phone}` : ""}</SelectItem>
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+                {c.phone ? ` · ${c.phone}` : ""}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -535,25 +661,40 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
       {/* PRODUITS */}
       <section className="space-y-2">
         <Label>Produits</Label>
-        <Input placeholder="Rechercher un produit..." value={productSearch} onChange={(e) => setProductSearch(e.target.value)} />
+        <Input
+          placeholder="Rechercher un produit..."
+          value={productSearch}
+          onChange={(e) => setProductSearch(e.target.value)}
+        />
         <div className="grid gap-2 sm:grid-cols-2">
           <Select
             value={selectedProduct}
-            onValueChange={(v) => { setSelectedProduct(v); setSelectedVariant(""); }}
+            onValueChange={(v) => {
+              setSelectedProduct(v);
+              setSelectedVariant("");
+            }}
           >
-            <SelectTrigger><SelectValue placeholder="Produit" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Produit" />
+            </SelectTrigger>
             <SelectContent>
               {filteredProducts.map((p) => (
-                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {variants.length > 0 && (
             <Select value={selectedVariant} onValueChange={setSelectedVariant}>
-              <SelectTrigger><SelectValue placeholder="Variante" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Variante" />
+              </SelectTrigger>
               <SelectContent>
                 {variants.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>{v.name}: {v.value} · stock {v.stock}</SelectItem>
+                  <SelectItem key={v.id} value={v.id}>
+                    {v.name}: {v.value} · stock {v.stock}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -562,9 +703,17 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
         {currentProduct && (
           <div className="flex flex-wrap items-end gap-3 rounded-md border p-3">
             <div className="space-y-1">
-              <Label htmlFor="qty" className="text-xs">Quantité</Label>
-              <Input id="qty" type="number" min={1} className="w-24" value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))} />
+              <Label htmlFor="qty" className="text-xs">
+                Quantité
+              </Label>
+              <Input
+                id="qty"
+                type="number"
+                min={1}
+                className="w-24"
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
+              />
             </div>
             <div className="text-sm">
               <p className="text-muted-foreground text-xs">Prix unitaire</p>
@@ -572,7 +721,9 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
             </div>
             <div className="text-sm">
               <p className="text-muted-foreground text-xs">Stock disponible</p>
-              <p className={availableStock <= 0 ? "font-medium text-destructive" : "font-medium"}>{availableStock}</p>
+              <p className={availableStock <= 0 ? "font-medium text-destructive" : "font-medium"}>
+                {availableStock}
+              </p>
             </div>
             <Button type="button" onClick={addToCart} disabled={availableStock <= 0}>
               <Plus className="mr-1 h-4 w-4" /> Ajouter
@@ -585,7 +736,9 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
       <section className="space-y-2">
         <Label>Panier</Label>
         {cart.length === 0 ? (
-          <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">Aucun article</p>
+          <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+            Aucun article
+          </p>
         ) : (
           <Table>
             <TableHeader>
@@ -611,18 +764,26 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
                       onChange={(e) => {
                         const v = Math.max(1, Number(e.target.value) || 1);
                         if (v > l.stock) {
-                          toast.error(`Stock insuffisant pour ${l.label}. Disponible : ${l.stock}.`);
+                          toast.error(
+                            `Stock insuffisant pour ${l.label}. Disponible : ${l.stock}.`,
+                          );
                           return;
                         }
-                        setCart((prev) => prev.map((x) => (x.key === l.key ? { ...x, quantity: v } : x)));
+                        setCart((prev) =>
+                          prev.map((x) => (x.key === l.key ? { ...x, quantity: v } : x)),
+                        );
                       }}
                     />
                   </TableCell>
                   <TableCell className="text-right">{fmt(l.unitPrice)}</TableCell>
                   <TableCell className="text-right">{fmt(l.unitPrice * l.quantity)}</TableCell>
                   <TableCell className="text-right">
-                    <Button type="button" variant="ghost" size="icon"
-                      onClick={() => setCart((prev) => prev.filter((x) => x.key !== l.key))}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setCart((prev) => prev.filter((x) => x.key !== l.key))}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -637,22 +798,44 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="shipping">Livraison (FCFA)</Label>
-          <Input id="shipping" type="number" min={0} value={shipping}
-            onChange={(e) => setShipping(Math.max(0, Number(e.target.value) || 0))} />
+          <Input
+            id="shipping"
+            type="number"
+            min={0}
+            value={shipping}
+            onChange={(e) => setShipping(Math.max(0, Number(e.target.value) || 0))}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="discount">Remise (FCFA)</Label>
-          <Input id="discount" type="number" min={0} value={discount}
-            onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))} />
+          <Input
+            id="discount"
+            type="number"
+            min={0}
+            value={discount}
+            onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
+          />
         </div>
       </section>
 
       <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
-        <div className="flex justify-between"><span>Sous-total</span><span>{fmt(subtotal)}</span></div>
-        <div className="flex justify-between"><span>Livraison</span><span>{fmt(shipping)}</span></div>
-        <div className="flex justify-between"><span>Remise</span><span>-{fmt(discount)}</span></div>
+        <div className="flex justify-between">
+          <span>Sous-total</span>
+          <span>{fmt(subtotal)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Livraison</span>
+          <span>{fmt(shipping)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Remise</span>
+          <span>-{fmt(discount)}</span>
+        </div>
         <Separator className="my-1" />
-        <div className="flex justify-between text-base font-bold"><span>Total</span><span>{fmt(total)}</span></div>
+        <div className="flex justify-between text-base font-bold">
+          <span>Total</span>
+          <span>{fmt(total)}</span>
+        </div>
       </div>
 
       {/* CANAL / PAIEMENT */}
@@ -660,34 +843,56 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
         <div className="space-y-1.5">
           <Label>Canal</Label>
           <Select value={channel} onValueChange={setChannel}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {CHANNELS.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+              {CHANNELS.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
           <Label>Paiement</Label>
           <Select value={paymentStatus} onValueChange={setPaymentStatus}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {PAYMENT_STATUSES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+              {PAYMENT_STATUSES.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
           <Label>Méthode</Label>
-          <Select value={paymentMethod || "none"} onValueChange={(v) => setPaymentMethod(v === "none" ? "" : v)}>
-            <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+          <Select
+            value={paymentMethod || "none"}
+            onValueChange={(v) => setPaymentMethod(v === "none" ? "" : v)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="—" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">— Non précisée —</SelectItem>
-              {PAYMENT_METHODS.map((m) => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+              {PAYMENT_METHODS.map((m) => (
+                <SelectItem key={m.value} value={m.value}>
+                  {m.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
       </section>
       <p className="text-xs text-muted-foreground">
-        Le paiement est enregistré à titre informatif : aucun encaissement automatique n'est encore connecté.
+        Le paiement est enregistré à titre informatif : aucun encaissement automatique n'est encore
+        connecté.
       </p>
 
       <div className="space-y-1.5">
@@ -725,10 +930,15 @@ function OrderForm({ storeId, onDone }: { storeId: string | null; onDone: () => 
 
       <Dialog open={newCustomerOpen} onOpenChange={setNewCustomerOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Nouveau client</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Nouveau client</DialogTitle>
+          </DialogHeader>
           <form
             className="space-y-3"
-            onSubmit={(e) => { e.preventDefault(); createCustomer.mutate(new FormData(e.currentTarget)); }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              createCustomer.mutate(new FormData(e.currentTarget));
+            }}
           >
             <div className="space-y-1.5">
               <Label htmlFor="c-name">Nom</Label>

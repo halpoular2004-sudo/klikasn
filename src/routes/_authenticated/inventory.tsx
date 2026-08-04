@@ -8,9 +8,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, AlertTriangle, ArrowDownUp, Boxes } from "lucide-react";
@@ -21,7 +34,10 @@ export const Route = createFileRoute("/_authenticated/inventory")({
   head: () => ({
     meta: [
       { title: "Stocks — Klika.sn" },
-      { name: "description", content: "Suivi des stocks, alertes et mouvements d'inventaire sur Klika.sn." },
+      {
+        name: "description",
+        content: "Suivi des stocks, alertes et mouvements d'inventaire sur Klika.sn.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -48,7 +64,9 @@ function InventoryPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, sku, unit, stock, low_stock_threshold, product_variants(id, name, value, sku, stock)")
+        .select(
+          "id, name, sku, unit, stock, low_stock_threshold, product_variants(id, name, value, sku, stock)",
+        )
         .eq("store_id", store!.id)
         .order("name");
       if (error) throw error;
@@ -99,8 +117,24 @@ function InventoryPage() {
   });
 
   const rows = (products.data ?? []).flatMap((p) => {
-    const variants = (p.product_variants ?? []) as { id: string; name: string; value: string; sku: string | null; stock: number }[];
-    const base = [{ productId: p.id, variantId: null as string | null, label: p.name, sku: p.sku, stock: p.stock, threshold: p.low_stock_threshold, unit: p.unit }];
+    const variants = (p.product_variants ?? []) as {
+      id: string;
+      name: string;
+      value: string;
+      sku: string | null;
+      stock: number;
+    }[];
+    const base = [
+      {
+        productId: p.id,
+        variantId: null as string | null,
+        label: p.name,
+        sku: p.sku,
+        stock: p.stock,
+        threshold: p.low_stock_threshold,
+        unit: p.unit,
+      },
+    ];
     return base.concat(
       variants.map((v) => ({
         productId: p.id,
@@ -120,16 +154,32 @@ function InventoryPage() {
     <DashboardShell title="Stocks" description="Inventaire, alertes et mouvements">
       <div className="grid gap-4 md:grid-cols-3 mb-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Références suivies</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Références suivies
+            </CardTitle>
+          </CardHeader>
           <CardContent className="text-2xl font-bold">{rows.length}</CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Unités en stock</CardTitle></CardHeader>
-          <CardContent className="text-2xl font-bold">{rows.reduce((s, r) => s + r.stock, 0)}</CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Unités en stock
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold">
+            {rows.reduce((s, r) => s + r.stock, 0)}
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Alertes stock bas</CardTitle></CardHeader>
-          <CardContent className="text-2xl font-bold text-destructive">{lowStock.length}</CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Alertes stock bas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-destructive">
+            {lowStock.length}
+          </CardContent>
         </Card>
       </div>
 
@@ -144,7 +194,9 @@ function InventoryPage() {
           <Card>
             <CardContent className="p-4">
               {products.isLoading ? (
-                <div className="py-16 text-center"><Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" /></div>
+                <div className="py-16 text-center">
+                  <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
               ) : rows.length === 0 ? (
                 <div className="py-16 text-center">
                   <Boxes className="mx-auto h-10 w-10 text-muted-foreground" />
@@ -164,7 +216,9 @@ function InventoryPage() {
                 <div className="py-16 text-center">
                   <AlertTriangle className="mx-auto h-10 w-10 text-muted-foreground" />
                   <p className="mt-3 font-medium">Aucune alerte</p>
-                  <p className="text-sm text-muted-foreground">Tous vos stocks sont au-dessus du seuil.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Tous vos stocks sont au-dessus du seuil.
+                  </p>
                 </div>
               ) : (
                 <StockTable rows={lowStock} onMove={setTarget} />
@@ -197,13 +251,19 @@ function InventoryPage() {
                       const v = m.product_variants as { name: string; value: string } | null;
                       return (
                         <TableRow key={m.id}>
-                          <TableCell className="text-muted-foreground">{new Date(m.created_at).toLocaleString("fr-FR")}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {new Date(m.created_at).toLocaleString("fr-FR")}
+                          </TableCell>
                           <TableCell className="font-medium">
                             {(m.products as { name: string } | null)?.name ?? "—"}
                             {v ? ` — ${v.name}: ${v.value}` : ""}
                           </TableCell>
-                          <TableCell><Badge variant="secondary">{typeLabels[m.type] ?? m.type}</Badge></TableCell>
-                          <TableCell className={m.quantity < 0 ? "text-destructive" : "text-primary"}>
+                          <TableCell>
+                            <Badge variant="secondary">{typeLabels[m.type] ?? m.type}</Badge>
+                          </TableCell>
+                          <TableCell
+                            className={m.quantity < 0 ? "text-destructive" : "text-primary"}
+                          >
                             {m.quantity > 0 ? `+${m.quantity}` : m.quantity}
                           </TableCell>
                           <TableCell className="text-muted-foreground">{m.reason ?? "—"}</TableCell>
@@ -231,12 +291,15 @@ function InventoryPage() {
             }}
           >
             <p className="text-sm text-muted-foreground">
-              {target?.label} — stock actuel : <span className="font-medium text-foreground">{target?.stock}</span>
+              {target?.label} — stock actuel :{" "}
+              <span className="font-medium text-foreground">{target?.stock}</span>
             </p>
             <div className="space-y-1.5">
               <Label htmlFor="type">Type</Label>
               <Select name="type" defaultValue="in">
-                <SelectTrigger id="type"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="type">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="in">Entrée (réapprovisionnement)</SelectItem>
                   <SelectItem value="out">Sortie (perte, casse)</SelectItem>
@@ -268,7 +331,15 @@ function StockTable({
   rows,
   onMove,
 }: {
-  rows: { productId: string; variantId: string | null; label: string; sku: string | null; stock: number; threshold: number; unit: string }[];
+  rows: {
+    productId: string;
+    variantId: string | null;
+    label: string;
+    sku: string | null;
+    stock: number;
+    threshold: number;
+    unit: string;
+  }[];
   onMove: (t: MovementTarget) => void;
 }) {
   return (
@@ -297,7 +368,14 @@ function StockTable({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onMove({ productId: r.productId, variantId: r.variantId, label: r.label, stock: r.stock })}
+                onClick={() =>
+                  onMove({
+                    productId: r.productId,
+                    variantId: r.variantId,
+                    label: r.label,
+                    stock: r.stock,
+                  })
+                }
               >
                 <ArrowDownUp className="mr-2 h-3.5 w-3.5" /> Ajuster
               </Button>
