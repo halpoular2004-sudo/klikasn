@@ -149,6 +149,32 @@ export type Database = {
           },
         ]
       }
+      order_counters: {
+        Row: {
+          last_number: number
+          store_id: string
+          year: number
+        }
+        Insert: {
+          last_number?: number
+          store_id: string
+          year: number
+        }
+        Update: {
+          last_number?: number
+          store_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_counters_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -159,6 +185,7 @@ export type Database = {
           quantity: number
           total: number
           unit_price: number
+          variant_id: string | null
         }
         Insert: {
           created_at?: string
@@ -169,6 +196,7 @@ export type Database = {
           quantity?: number
           total?: number
           unit_price?: number
+          variant_id?: string | null
         }
         Update: {
           created_at?: string
@@ -179,6 +207,7 @@ export type Database = {
           quantity?: number
           total?: number
           unit_price?: number
+          variant_id?: string | null
         }
         Relationships: [
           {
@@ -195,61 +224,83 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
+          cancelled_at: string | null
           channel: Database["public"]["Enums"]["order_channel"]
+          confirmed_at: string | null
           created_at: string
           created_by: string | null
           currency: string
           customer_id: string | null
+          delivered_at: string | null
           discount: number
           id: string
+          idempotency_key: string | null
           notes: string | null
           order_number: string
           payment_method: Database["public"]["Enums"]["payment_method"] | null
           payment_status: Database["public"]["Enums"]["payment_status"]
           shipping: number
           status: Database["public"]["Enums"]["order_status"]
+          stock_deducted: boolean
           store_id: string
           subtotal: number
           total: number
           updated_at: string
         }
         Insert: {
+          cancelled_at?: string | null
           channel?: Database["public"]["Enums"]["order_channel"]
+          confirmed_at?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
           customer_id?: string | null
+          delivered_at?: string | null
           discount?: number
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
           order_number: string
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           shipping?: number
           status?: Database["public"]["Enums"]["order_status"]
+          stock_deducted?: boolean
           store_id: string
           subtotal?: number
           total?: number
           updated_at?: string
         }
         Update: {
+          cancelled_at?: string | null
           channel?: Database["public"]["Enums"]["order_channel"]
+          confirmed_at?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
           customer_id?: string | null
+          delivered_at?: string | null
           discount?: number
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
           order_number?: string
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           shipping?: number
           status?: Database["public"]["Enums"]["order_status"]
+          stock_deducted?: boolean
           store_id?: string
           subtotal?: number
           total?: number
@@ -597,7 +648,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      adjust_stock: {
+        Args: {
+          p_product_id: string
+          p_quantity: number
+          p_reason?: string
+          p_store_id: string
+          p_type: string
+          p_variant_id?: string
+        }
+        Returns: Json
+      }
+      create_order_transaction: {
+        Args: {
+          p_channel?: string
+          p_customer_id?: string
+          p_discount?: number
+          p_idempotency_key?: string
+          p_items: Json
+          p_notes?: string
+          p_payment_method?: string
+          p_payment_status?: string
+          p_shipping?: number
+          p_store_id: string
+        }
+        Returns: Json
+      }
+      update_order_status: {
+        Args: { p_order_id: string; p_status: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "owner" | "staff" | "manager" | "employee" | "client"
