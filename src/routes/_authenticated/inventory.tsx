@@ -76,29 +76,17 @@ function InventoryPage() {
       if (!store?.id || !target) throw new Error("Aucune sélection");
       const type = String(form.get("type"));
       const qty = Number(form.get("quantity") || 0);
-      if (!qty) throw new Error("Quantité invalide");
-      const delta = type === "adjustment" ? qty - target.stock : type === "in" || type === "return" ? qty : -qty;
-      const newStock = Math.max(0, target.stock + delta);
+      if (qty < 0 || (type !== "adjustment" && qty <= 0)) throw new Error("Quantité invalide");
 
-      if (target.variantId) {
-        const { error } = await supabase.from("product_variants").update({ stock: newStock }).eq("id", target.variantId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("products").update({ stock: newStock }).eq("id", target.productId);
-        if (error) throw error;
-      }
-
-      const { data: userData } = await supabase.auth.getUser();
-      const { error: mErr } = await supabase.from("stock_movements").insert({
-        store_id: store.id,
-        product_id: target.productId,
-        variant_id: target.variantId,
-        type: type as "in" | "out" | "adjustment" | "sale" | "return",
-        quantity: delta,
-        reason: String(form.get("reason") || "") || null,
-        created_by: userData.user?.id ?? null,
+      const { error } = await supabase.rpc("adjust_stock", {
+        p_store_id: store.id,
+        p_product_id: target.productId,
+        p_variant_id: target.variantId ?? undefined,
+        p_type: type,
+        p_quantity: qty,
+        p_reason: String(form.get("reason") || "") || undefined,
       });
-      if (mErr) throw mErr;
+      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Stock mis à jour");
