@@ -27,6 +27,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
 import { Route as AuthenticatedAiRouteImport } from './routes/_authenticated/ai'
+import { Route as ShopSlugIndexRouteImport } from './routes/shop.$slug.index'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -117,6 +118,11 @@ const AuthenticatedAiRoute = AuthenticatedAiRouteImport.update({
   path: '/ai',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ShopSlugIndexRoute = ShopSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -135,7 +141,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/whatsapp': typeof AuthenticatedWhatsappRoute
-  '/shop/$slug': typeof ShopSlugRoute
+  '/shop/$slug': typeof ShopSlugRouteWithChildren
+  '/shop/$slug/': typeof ShopSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -154,7 +161,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/whatsapp': typeof AuthenticatedWhatsappRoute
-  '/shop/$slug': typeof ShopSlugRoute
+  '/shop/$slug': typeof ShopSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -175,7 +182,8 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/_authenticated/whatsapp': typeof AuthenticatedWhatsappRoute
-  '/shop/$slug': typeof ShopSlugRoute
+  '/shop/$slug': typeof ShopSlugRouteWithChildren
+  '/shop/$slug/': typeof ShopSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,6 +205,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/whatsapp'
     | '/shop/$slug'
+    | '/shop/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/_authenticated/store'
     | '/_authenticated/whatsapp'
     | '/shop/$slug'
+    | '/shop/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -244,7 +254,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ShopSlugRoute: typeof ShopSlugRoute
+  ShopSlugRoute: typeof ShopSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -375,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/shop/$slug/': {
+      id: '/shop/$slug/'
+      path: '/'
+      fullPath: '/shop/$slug/'
+      preLoaderRoute: typeof ShopSlugIndexRouteImport
+      parentRoute: typeof ShopSlugRoute
+    }
   }
 }
 
@@ -411,13 +428,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ShopSlugRouteChildren {
+  ShopSlugIndexRoute: typeof ShopSlugIndexRoute
+}
+
+const ShopSlugRouteChildren: ShopSlugRouteChildren = {
+  ShopSlugIndexRoute: ShopSlugIndexRoute,
+}
+
+const ShopSlugRouteWithChildren = ShopSlugRoute._addFileChildren(
+  ShopSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ShopSlugRoute: ShopSlugRoute,
+  ShopSlugRoute: ShopSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

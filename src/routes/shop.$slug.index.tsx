@@ -16,7 +16,7 @@ export const Route = createFileRoute("/shop/$slug/")({
 const shopRoute = getRouteApi("/shop/$slug");
 
 function ShopHome() {
-  const shop = shopRoute.useLoaderData();
+  const shop = shopRoute.useLoaderData() as PublicShop;
   const { slug } = Route.useParams();
   const cart = useCart();
   const [categoryId, setCategoryId] = useState<string | "all">("all");
