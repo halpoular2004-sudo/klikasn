@@ -39,11 +39,19 @@ type ProductRow = {
   category_id: string | null;
   low_stock_threshold: number;
   is_active: boolean;
+  status: "draft" | "published" | "archived";
   categories: { name: string } | null;
   product_variants: { id: string }[] | null;
 };
 
 const NO_CATEGORY = "__none__";
+
+const statusMeta: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
+  published: { label: "Publié", variant: "default" },
+  draft: { label: "Brouillon", variant: "secondary" },
+  archived: { label: "Archivé", variant: "outline" },
+};
+
 
 function ProductsPage() {
   const { data: store } = useCurrentStore();
