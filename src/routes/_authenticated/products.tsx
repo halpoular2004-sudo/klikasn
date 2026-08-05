@@ -256,6 +256,8 @@ function ProductForm({
 }) {
   const qc = useQueryClient();
   const [categoryId, setCategoryId] = useState(product?.category_id ?? NO_CATEGORY);
+  const [status, setStatus] = useState<string>(product?.status ?? "draft");
+
 
   const mutation = useMutation({
     mutationFn: async (form: FormData) => {
