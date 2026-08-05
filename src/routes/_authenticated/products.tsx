@@ -39,11 +39,19 @@ type ProductRow = {
   category_id: string | null;
   low_stock_threshold: number;
   is_active: boolean;
+  status: "draft" | "published" | "archived";
   categories: { name: string } | null;
   product_variants: { id: string }[] | null;
 };
 
 const NO_CATEGORY = "__none__";
+
+const statusMeta: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
+  published: { label: "Publié", variant: "default" },
+  draft: { label: "Brouillon", variant: "secondary" },
+  archived: { label: "Archivé", variant: "outline" },
+};
+
 
 function ProductsPage() {
   const { data: store } = useCurrentStore();
@@ -185,7 +193,10 @@ function ProductsPage() {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? "Actif" : "Inactif"}</Badge>
+                        <Badge variant={(statusMeta[p.status] ?? statusMeta.draft).variant}>
+                          {(statusMeta[p.status] ?? statusMeta.draft).label}
+                        </Badge>
+
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <Button variant="ghost" size="icon" onClick={() => setEditing(p)}>
@@ -245,6 +256,8 @@ function ProductForm({
 }) {
   const qc = useQueryClient();
   const [categoryId, setCategoryId] = useState(product?.category_id ?? NO_CATEGORY);
+  const [status, setStatus] = useState<string>(product?.status ?? "draft");
+
 
   const mutation = useMutation({
     mutationFn: async (form: FormData) => {
@@ -259,6 +272,8 @@ function ProductForm({
         low_stock_threshold: Number(form.get("low_stock_threshold") || 5),
         description: String(form.get("description") || "") || null,
         category_id: categoryId === NO_CATEGORY ? null : categoryId,
+        status: status as "draft" | "published" | "archived",
+
       };
       if (product) {
         const { error } = await supabase.from("products").update(payload).eq("id", product.id);
@@ -290,6 +305,17 @@ function ProductForm({
         <Input id="name" name="name" defaultValue={product?.name} required />
       </div>
       <div className="space-y-1.5">
+        <Label>Statut de publication</Label>
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="draft">Brouillon (invisible en boutique)</SelectItem>
+            <SelectItem value="published">Publié (visible en boutique)</SelectItem>
+            <SelectItem value="archived">Archivé</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1.5">
         <Label>Catégorie</Label>
         <Select value={categoryId} onValueChange={setCategoryId}>
           <SelectTrigger><SelectValue placeholder="Sans catégorie" /></SelectTrigger>
@@ -301,6 +327,7 @@ function ProductForm({
           </SelectContent>
         </Select>
       </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="price">Prix (FCFA)</Label>

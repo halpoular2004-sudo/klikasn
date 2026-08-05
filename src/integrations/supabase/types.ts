@@ -250,7 +250,13 @@ export type Database = {
           order_number: string
           payment_method: Database["public"]["Enums"]["payment_method"] | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          public_token: string
           shipping: number
+          shipping_address: string | null
+          shipping_city: string | null
+          shipping_district: string | null
+          shipping_label: string | null
+          shipping_option_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           stock_deducted: boolean
           store_id: string
@@ -274,7 +280,13 @@ export type Database = {
           order_number: string
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          public_token?: string
           shipping?: number
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_district?: string | null
+          shipping_label?: string | null
+          shipping_option_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stock_deducted?: boolean
           store_id: string
@@ -298,7 +310,13 @@ export type Database = {
           order_number?: string
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          public_token?: string
           shipping?: number
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_district?: string | null
+          shipping_label?: string | null
+          shipping_option_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stock_deducted?: boolean
           store_id?: string
@@ -312,6 +330,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shipping_option_id_fkey"
+            columns: ["shipping_option_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_options"
             referencedColumns: ["id"]
           },
           {
@@ -389,6 +414,7 @@ export type Database = {
           name: string
           price: number
           sku: string | null
+          status: Database["public"]["Enums"]["product_status"]
           stock: number
           store_id: string
           unit: string
@@ -409,6 +435,7 @@ export type Database = {
           name: string
           price?: number
           sku?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
           stock?: number
           store_id: string
           unit?: string
@@ -429,6 +456,7 @@ export type Database = {
           name?: string
           price?: number
           sku?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
           stock?: number
           store_id?: string
           unit?: string
@@ -480,6 +508,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      shipping_options: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          sort_order: number
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number
+          sort_order?: number
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          sort_order?: number
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_options_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stock_movements: {
         Row: {
@@ -584,6 +653,8 @@ export type Database = {
           name: string
           owner_id: string
           phone: string | null
+          shipping_note: string | null
+          show_stock: boolean
           slug: string | null
           updated_at: string
           whatsapp_number: string | null
@@ -600,6 +671,8 @@ export type Database = {
           name: string
           owner_id: string
           phone?: string | null
+          shipping_note?: string | null
+          show_stock?: boolean
           slug?: string | null
           updated_at?: string
           whatsapp_number?: string | null
@@ -616,6 +689,8 @@ export type Database = {
           name?: string
           owner_id?: string
           phone?: string | null
+          shipping_note?: string | null
+          show_stock?: boolean
           slug?: string | null
           updated_at?: string
           whatsapp_number?: string | null
@@ -674,6 +749,22 @@ export type Database = {
         }
         Returns: Json
       }
+      create_public_order: {
+        Args: {
+          p_customer: Json
+          p_idempotency_key?: string
+          p_items: Json
+          p_notes?: string
+          p_shipping_option_id?: string
+          p_slug: string
+        }
+        Returns: Json
+      }
+      get_public_order: {
+        Args: { p_order_number: string; p_slug: string; p_token: string }
+        Returns: Json
+      }
+      get_public_shop: { Args: { p_slug: string }; Returns: Json }
       update_order_status: {
         Args: { p_order_id: string; p_status: string }
         Returns: Json
@@ -707,6 +798,7 @@ export type Database = {
         | "stripe"
         | "other"
       payment_status: "unpaid" | "partial" | "paid" | "refunded"
+      product_status: "draft" | "published" | "archived"
       stock_movement_type: "in" | "out" | "adjustment" | "sale" | "return"
     }
     CompositeTypes: {
@@ -865,6 +957,7 @@ export const Constants = {
         "other",
       ],
       payment_status: ["unpaid", "partial", "paid", "refunded"],
+      product_status: ["draft", "published", "archived"],
       stock_movement_type: ["in", "out", "adjustment", "sale", "return"],
     },
   },
