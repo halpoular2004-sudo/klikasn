@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MapPin, Phone, ShoppingBag, Plus, Minus, Trash2, Store } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
-import { formatMoney, whatsappHref, type ShopProduct } from "@/lib/shop-types";
+import { formatMoney, whatsappHref, type PublicShop, type ShopProduct } from "@/lib/shop-types";
 
 export const Route = createFileRoute("/shop/$slug/")({
   component: ShopHome,
