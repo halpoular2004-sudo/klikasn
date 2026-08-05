@@ -272,6 +272,8 @@ function ProductForm({
         low_stock_threshold: Number(form.get("low_stock_threshold") || 5),
         description: String(form.get("description") || "") || null,
         category_id: categoryId === NO_CATEGORY ? null : categoryId,
+        status: status as "draft" | "published" | "archived",
+
       };
       if (product) {
         const { error } = await supabase.from("products").update(payload).eq("id", product.id);
