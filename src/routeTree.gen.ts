@@ -28,6 +28,7 @@ import { Route as AuthenticatedCustomersRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
 import { Route as AuthenticatedAiRouteImport } from './routes/_authenticated/ai'
 import { Route as ShopSlugIndexRouteImport } from './routes/shop.$slug.index'
+import { Route as ShopSlugCheckoutRouteImport } from './routes/shop.$slug.checkout'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -123,6 +124,11 @@ const ShopSlugIndexRoute = ShopSlugIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ShopSlugRoute,
 } as any)
+const ShopSlugCheckoutRoute = ShopSlugCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => ShopSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/store': typeof AuthenticatedStoreRoute
   '/whatsapp': typeof AuthenticatedWhatsappRoute
   '/shop/$slug': typeof ShopSlugRouteWithChildren
+  '/shop/$slug/checkout': typeof ShopSlugCheckoutRoute
   '/shop/$slug/': typeof ShopSlugIndexRoute
 }
 export interface FileRoutesByTo {
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/whatsapp': typeof AuthenticatedWhatsappRoute
+  '/shop/$slug/checkout': typeof ShopSlugCheckoutRoute
   '/shop/$slug': typeof ShopSlugIndexRoute
 }
 export interface FileRoutesById {
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/_authenticated/whatsapp': typeof AuthenticatedWhatsappRoute
   '/shop/$slug': typeof ShopSlugRouteWithChildren
+  '/shop/$slug/checkout': typeof ShopSlugCheckoutRoute
   '/shop/$slug/': typeof ShopSlugIndexRoute
 }
 export interface FileRouteTypes {
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/whatsapp'
     | '/shop/$slug'
+    | '/shop/$slug/checkout'
     | '/shop/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/store'
     | '/whatsapp'
+    | '/shop/$slug/checkout'
     | '/shop/$slug'
   id:
     | '__root__'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/_authenticated/store'
     | '/_authenticated/whatsapp'
     | '/shop/$slug'
+    | '/shop/$slug/checkout'
     | '/shop/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -392,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopSlugIndexRouteImport
       parentRoute: typeof ShopSlugRoute
     }
+    '/shop/$slug/checkout': {
+      id: '/shop/$slug/checkout'
+      path: '/checkout'
+      fullPath: '/shop/$slug/checkout'
+      preLoaderRoute: typeof ShopSlugCheckoutRouteImport
+      parentRoute: typeof ShopSlugRoute
+    }
   }
 }
 
@@ -429,10 +448,12 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface ShopSlugRouteChildren {
+  ShopSlugCheckoutRoute: typeof ShopSlugCheckoutRoute
   ShopSlugIndexRoute: typeof ShopSlugIndexRoute
 }
 
 const ShopSlugRouteChildren: ShopSlugRouteChildren = {
+  ShopSlugCheckoutRoute: ShopSlugCheckoutRoute,
   ShopSlugIndexRoute: ShopSlugIndexRoute,
 }
 
