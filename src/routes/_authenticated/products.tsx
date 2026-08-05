@@ -193,7 +193,10 @@ function ProductsPage() {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? "Actif" : "Inactif"}</Badge>
+                        <Badge variant={(statusMeta[p.status] ?? statusMeta.draft).variant}>
+                          {(statusMeta[p.status] ?? statusMeta.draft).label}
+                        </Badge>
+
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <Button variant="ghost" size="icon" onClick={() => setEditing(p)}>
