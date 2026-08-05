@@ -301,6 +301,17 @@ function ProductForm({
         <Input id="name" name="name" defaultValue={product?.name} required />
       </div>
       <div className="space-y-1.5">
+        <Label>Statut de publication</Label>
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="draft">Brouillon (invisible en boutique)</SelectItem>
+            <SelectItem value="published">Publié (visible en boutique)</SelectItem>
+            <SelectItem value="archived">Archivé</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1.5">
         <Label>Catégorie</Label>
         <Select value={categoryId} onValueChange={setCategoryId}>
           <SelectTrigger><SelectValue placeholder="Sans catégorie" /></SelectTrigger>
@@ -312,6 +323,7 @@ function ProductForm({
           </SelectContent>
         </Select>
       </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="price">Prix (FCFA)</Label>
